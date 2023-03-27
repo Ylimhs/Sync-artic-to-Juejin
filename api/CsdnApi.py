@@ -20,12 +20,14 @@ class CsdnClient(object):
     x-ca-key:203803574
     x-ca-nonce:754a95be-abb1-4692-b4ae-2414b122d644
     /blog/phoenix/console/v1/article/list?pageSize=20&status=enable
-    获取文章列表(全部可见)
+    获取文章列表(默认可见的全部可见)
     """
 
-    def get_article_list(self, status="all", pageSize=20):
+    def get_article_list(self, status="enable", pageSize=20, page =1):
         url = "https://bizapi.csdn.net/blog/phoenix/console/v1/article/list?status=" + status + "&pageSize=" + str(
             pageSize)
+        if page != 1
+            url += url + "&page=" + str(page)
         nonce = generate_uuid()
         signature = get_sign(nonce, url)
         headers = {

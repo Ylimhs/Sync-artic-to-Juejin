@@ -2,7 +2,10 @@
 # @Desc   :  
 # @Author : ylimhs
 # @Time   : 2020/5/13 9:45
+import re
 import time
+
+import markdown
 
 from api.CsdnApi import CsdnClient
 from api.JuejinApi import JJClient
@@ -44,32 +47,38 @@ def check_env_parmas():
 
 def get_csdn_artics_info(client):
     artic_info_list = list()
-    failed_get_artics_list = list()
+    page = 1
+    size = 20
+    total = 20
     logging.info("begin to get csdn artics list info...")
     try:
         logging.info("begin to get csdn articleId list info...")
-        artic_id_list_info = client.get_article_list()
-        if artic_id_list_info.get("code") != 200 or artic_id_list_info.get("message") != "success":
-            logging.error(
-                f"get_article_list return code {artic_id_list_info.get('code')} and  message is {artic_id_list_info.get('message')}...")
-            return None
-        logging.info("end to get csdn articleId list info success...")
-        logging.info("begin to get csdn artic info by the articleId...")
-        data = artic_id_list_info.get('data')
-        for aid in data.get("list"):
-            articleId = aid.get("articleId")
-            arc_info = ""
-            try:
-                arc_info = client.get_article_content(articleId)
-            except Exception as err:
-                logging.error(f"fail to get the airtic info for the {articleId} with err is {str(err)}")
-                failed_sysc_artic_list.append(articleId)
-                continue
+        while page == 1 or page * size < total:
+            artic_id_list_info = client.get_article_list(page=page)
+            if artic_id_list_info.get("code") != 200 or artic_id_list_info.get("message") != "success":
+                logging.error(
+                    f"get_article_list return code {artic_id_list_info.get('code')} and  message is {artic_id_list_info.get('message')}...")
+                return None
+            logging.info("end to get csdn articleId list info success...")
+            logging.info("begin to get csdn artic info by the articleId...")
+            data = artic_id_list_info.get('data')
+            page = data.get("page")
+            size = data.get("size")
+            total = data.get("total")
+            for aid in data.get("list"):
+                articleId = aid.get("articleId")
+                arc_info = ""
+                try:
+                    arc_info = client.get_article_content(articleId)
+                except Exception as err:
+                    logging.error(f"fail to get the airtic info for the {articleId} with err is {str(err)}")
+                    failed_sysc_artic_list.append(articleId)
+                    continue
+                    time.sleep(1)
+                logging.info(f"get articleId {articleId} content info is {arc_info} success ....")
+                logging.info(f"get articleId {articleId} content info success...")
+                artic_info_list.append(arc_info['data'])
                 time.sleep(1)
-            logging.info(f"get articleId {articleId} content info is {arc_info} success ....")
-            logging.info(f"get articleId {articleId} content info success...")
-            artic_info_list.append(arc_info['data'])
-            time.sleep(1)
         logging.info("end to get csdn artics list info...")
     except Exception as err:
         logging.error("Failed to get the csde artics list info with err is " + str(err))
@@ -81,17 +90,18 @@ def get_csdn_artics_info(client):
 """
 
 
-def check_description(client, artic_info, description):
+def check_description(client, dratf_id, artic_info, description):
     if len(description) > 50:
         return True
-
     retry = 3
     while retry > 0:
         try:
-            result = client.create_article_draft(artic_info)
-            if result.get("err_no") == 0 and result.get("err_msg") == "success":
-                logging.info("update_article_draft success....")
-                return True
+            get_article_draft_abstract = client.get_article_draft_abstract(dratf_id)
+            if len(get_article_draft_abstract) > 50:
+                result = client.update_article_draft(artic_info)
+                if result.get("err_no") == 0 and result.get("err_msg") == "success":
+                    logging.info("update_article_draft success....")
+                    return True
         except:
             pass
         logging.info("failed to update_article_draft and retry....")
@@ -106,7 +116,7 @@ def check_description(client, artic_info, description):
             artic_info.update({
                 "brief_content": description,
             })
-            result = client.create_article_draft(artic_info)
+            result = client.update_article_draft(artic_info)
             if result.get("err_no") == 0 and result.get("err_msg") == "success":
                 logging.info("update_article_draft description copy success....")
                 return True
@@ -160,6 +170,44 @@ def publish_article(client, id):
 
 
 """
+ 解析替换 转存图片链接
+"""
+
+
+def get_image_url(client, matchUrl):
+    newUrl = matchUrl
+    try:
+        result = client.img_urlSave(matchUrl)
+        if result.get("err_no") == 0 and result.get("err_msg") == "success":
+            newUrl = result.get("data")
+    except Exception as err:
+        logging.warning(f"save imgUrl {matchUrl} failed with err is {err}")
+        return None
+    return newUrl
+
+
+"""
+替换图片url
+"""
+
+
+def html_replace_image_links(client, content_text):
+    """解析Markdown文本中的图片链接并替换为动态获取的链接"""
+    replaced_html_text = content_text
+    try:
+        html_text = markdown.markdown(content_text)
+        pattern = r'<img.*?src="(.*?)".*?>'
+        replaced_html_text = html_text
+        for match in re.findall(pattern, html_text):
+            new_url = get_image_url(client, match)
+            if new_url is not None:
+                replaced_html_text = replaced_html_text.replace(match, new_url)
+    except Exception as err:
+        logging.warning(f"Failed to html_replace_image_links with err is {err}")
+    return replaced_html_text
+
+
+"""
 同步CSDN文章到掘金
 """
 
@@ -177,6 +225,14 @@ def publish_csdn_to_jj(client, csdn_artics_info):
             description = artic.get("description")
             content = artic.get("content")
             markdowncontent = artic.get("markdowncontent")
+
+            logging.info("Start dumping image url...")
+            if content != "":
+                content = html_replace_image_links(client, content)
+            if markdowncontent != "":
+                markdowncontent = html_replace_image_links(client, markdowncontent)
+            logging.info("Start dumping image url end...")
+
             changeFormatFlag = True
             if markdowncontent == "":
                 logging.info(f"the format is html, so begin html2md change for the artic {article_id} ...")
@@ -209,10 +265,11 @@ def publish_csdn_to_jj(client, csdn_artics_info):
             else:
                 logging.error(f" create_article_draft {article_id} to {id} failed.")
                 failed_sysc_artic_list.append(article_id)
+                continue
             time.sleep(3)
 
             # 检查简介是够符合
-            changeFormatFlag = check_description(client, artic_info, description)
+            changeFormatFlag = check_description(client, id, artic_info, description)
 
             # 发布
             logging.info("----------------------------------------------------")
