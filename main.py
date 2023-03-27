@@ -9,7 +9,7 @@ import markdown
 
 from api.CsdnApi import CsdnClient
 from api.JuejinApi import JJClient
-from config.config import CSND_COOKIE, JUEJIN_COOKIE, JUEJIN_UUID, SYNC_TO_DRAFT
+from config.config import CSND_COOKIE, JUEJIN_COOKIE, JUEJIN_UUID, SYNC_TO_DRAFT, CSND_ARTIC_STATUS
 from utils.utils import logging
 
 # 从CSDN 获取失败的文章
@@ -47,14 +47,14 @@ def check_env_parmas():
 
 def get_csdn_artics_info(client):
     artic_info_list = list()
-    page = 1
+    page = 0
     size = 20
     total = 20
     logging.info("begin to get csdn artics list info...")
     try:
         logging.info("begin to get csdn articleId list info...")
-        while page == 1 or page * size < total:
-            artic_id_list_info = client.get_article_list(page=page)
+        while page == 0 or page * size < total:
+            artic_id_list_info = client.get_article_list(status=CSND_ARTIC_STATUS, page=page)
             if artic_id_list_info.get("code") != 200 or artic_id_list_info.get("message") != "success":
                 logging.error(
                     f"get_article_list return code {artic_id_list_info.get('code')} and  message is {artic_id_list_info.get('message')}...")
@@ -96,13 +96,26 @@ def check_description(client, dratf_id, artic_info, description):
     retry = 3
     while retry > 0:
         try:
-            get_article_draft_abstract = client.get_article_draft_abstract(dratf_id)
-            if len(get_article_draft_abstract) > 50:
-                result = client.update_article_draft(artic_info)
-                if result.get("err_no") == 0 and result.get("err_msg") == "success":
-                    logging.info("update_article_draft success....")
-                    return True
-        except:
+            draft_abstract_result = client.get_article_draft_abstract(dratf_id)
+            if draft_abstract_result.get("err_no") == 0 and draft_abstract_result.get("err_msg") == "success":
+                draft_abstract_data = draft_abstract_result.get("data")
+                text = draft_abstract_data.get('text')
+                if len(text) < 50:
+                    retry = 0
+                    logging.info("failed to update_article_draft the draft_abstract is len < 50")
+                    continue
+                else:
+                    artic_info.update({
+                        "id": dratf_id,
+                        "brief_content": description
+                    })
+                    result = client.update_article_draft(artic_info)
+                    if result.get("err_no") == 0 and result.get("err_msg") == "success":
+                        logging.info("update_article_draft success....")
+                        return True
+            else:
+                logging.info(f"failed to get_article_draft_abstract for the {dratf_id} and retry.... ")
+        except Exception as err:
             pass
         logging.info("failed to update_article_draft and retry....")
         retry += -1
@@ -111,10 +124,14 @@ def check_description(client, dratf_id, artic_info, description):
         logging.info("failed to auto update_article_draft....")
         logging.info("update_article_draft description copy agagin....")
         try:
+            copyDecs = description
             while len(description) < 50:
-                description += description
+                description += copyDecs
+            if len(description) > 100:
+                description = description[:100]
             artic_info.update({
-                "brief_content": description,
+                "id": dratf_id,
+                "brief_content": description
             })
             result = client.update_article_draft(artic_info)
             if result.get("err_no") == 0 and result.get("err_msg") == "success":
@@ -273,8 +290,9 @@ def publish_csdn_to_jj(client, csdn_artics_info):
 
             # 发布
             logging.info("----------------------------------------------------")
-            logging.info("begin publish aticle ...")
+
             if not SYNC_TO_DRAFT:
+                logging.info("begin publish aticle ...")
                 if changeFormatFlag:
                     ret = publish_article(client, id)
                     if ret:
@@ -292,6 +310,7 @@ def publish_csdn_to_jj(client, csdn_artics_info):
                     success_sysc_artic_dratf_dict.update({
                         article_id: id
                     })
+                logging.info("end publish aticle ...")
             else:
                 success_sysc_artic_dratf_dict.update({
                     article_id: id
@@ -309,7 +328,17 @@ def publish_csdn_to_jj(client, csdn_artics_info):
 
 
 def print_result():
-    pass
+    logging.info("----------------------------------------")
+    logging.info("failed_get_artic_list:")
+    logging.info(failed_sysc_artic_list)
+    logging.info("failed_sysc_artic_list:")
+    logging.info(failed_sysc_artic_list)
+    for key, value in success_sysc_artic_dict.items():
+        logging.info('sync {} to {} sccuess.'.format(key, value))
+    for key, value in success_sysc_artic_dratf_dict.items():
+        logging.info('sync {} to artic_dratf  {} sccuess.'.format(key, value))
+
+    logging.info("----------------------------------------")
 
 
 def sync_csdn_to_jj():

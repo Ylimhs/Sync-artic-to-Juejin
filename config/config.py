@@ -10,6 +10,8 @@ JUEJIN_COOKIE = os.getenv("JUEJIN_COOKIE")
 JUEJIN_UUID = os.getenv("JUEJIN_UUID")
 CSND_COOKIE = os.getenv("CSND_COOKIE")
 SYNC_TO_DRAFT = os.getenv("SYNC_TO_DRAFT")
+CSND_ARTIC_STATUS = os.getenv("CSND_ARTIC_STATUS")
+
 if SYNC_TO_DRAFT is None:
     SYNC_TO_DRAFT = True
 

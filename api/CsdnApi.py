@@ -26,7 +26,7 @@ class CsdnClient(object):
     def get_article_list(self, status="enable", pageSize=20, page =1):
         url = "https://bizapi.csdn.net/blog/phoenix/console/v1/article/list?status=" + status + "&pageSize=" + str(
             pageSize)
-        if page != 1
+        if page != 1 and page != 0:
             url += url + "&page=" + str(page)
         nonce = generate_uuid()
         signature = get_sign(nonce, url)

@@ -63,11 +63,13 @@ class JJClient(object):
         }
 
         return request("POST", url, headers=headers, payload=payload).json()
+
     """
        更新草稿箱文章
     """
 
     def update_article_draft(self, artic_info):
+        id = artic_info['id']
         title = artic_info['title']
         brief_content = artic_info['brief_content']
         mark_content = artic_info['mark_content']
@@ -96,6 +98,7 @@ class JJClient(object):
         url = "https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=" + self.uuid
 
         payload = json.dumps({
+            "id": id,
             "category_id": category_id,
             "tag_ids": tag_ids,
             "link_url": link_url,
@@ -119,7 +122,6 @@ class JJClient(object):
         }
 
         return request("POST", url, headers=headers, payload=payload).json()
-
 
         """
         发布草稿箱文章
@@ -170,9 +172,10 @@ class JJClient(object):
         return request("POST", url, headers=headers, payload=payload).json()
 
     """
-    通过草稿箱 获取 文章的摘要简介(掘金发布要求不少于50字)
+    通过草稿箱 获取 文章的摘要简介(掘金发布要求不少于50字,不多于100)
     
     """
+
     def get_article_draft_abstract(self, draft_id):
         url = "https://api.juejin.cn/content_api/v1/article_draft/abstract?draft_id=" + draft_id + "&aid=2608&uuid=" + self.uuid
         payload = {}
@@ -187,12 +190,12 @@ class JJClient(object):
             'sec-fetch-site': 'same-site',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
         }
-
         return request("GET", url, headers=headers, payload=payload).json()
-   
+
     """
     图片转存
     """
+
     def img_urlSave(self, imgUrl):
         url = "https://juejin.cn/image/urlSave"
 
@@ -212,4 +215,3 @@ class JJClient(object):
         }
 
         return request("POST", url, headers=headers, payload=payload).json()
-    

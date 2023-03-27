@@ -23,7 +23,7 @@ import requests
 #                     filename='log/task.log',
 #                     filemode='a',
 #                     encoding='utf-8')
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     encoding='utf-8')
@@ -45,7 +45,6 @@ def request(method, url, headers, payload=None, data=None):
     logging.info("URL: " + url)
     # logging.info("headers:\n" + json.dumps(headers, indent=2, ensure_ascii=False))
     logging.info("payload: " + json.dumps(payload, indent=2, ensure_ascii=False))
-    # response = requests.request(method, url, headers=headers, json=payload)
     response = requests.request(method, url, headers=headers, data=payload)
     if response.status_code >= 400:
         response.raise_for_status()
