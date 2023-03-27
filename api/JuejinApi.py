@@ -189,3 +189,27 @@ class JJClient(object):
         }
 
         return request("GET", url, headers=headers, payload=payload).json()
+   
+    """
+    图片转存
+    """
+    def img_urlSave(self, imgUrl):
+        url = "https://juejin.cn/image/urlSave"
+
+        payload = json.dumps({
+            "url": imgUrl
+        })
+        headers = {
+            'authority': 'juejin.cn',
+            'accept': '*/*',
+            'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+            'content-type': 'application/json',
+            'cookie': self.cookie,
+            'origin': 'https://juejin.cn',
+            'referer': 'https://juejin.cn/editor/drafts/7214758560459014201',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
+        }
+
+        return request("POST", url, headers=headers, payload=payload).json()
+    
