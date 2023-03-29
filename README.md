@@ -32,6 +32,8 @@
 
 
 4. 仓库 -> Actions, 检查Workflows并启用。
+> 直接手动执行
+    ![img.png](./doc/pic/手动执行action1.png)
 5. 如果需要定时执行，请暂时自行修改 `.github/workflows/python-action.yml` 文件
 
 

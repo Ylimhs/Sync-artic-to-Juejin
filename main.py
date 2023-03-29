@@ -27,17 +27,15 @@ success_sysc_artic_dratf_dict = dict()
 
 
 def check_env_parmas():
+    check_flag = True
     if CSND_COOKIE is None:
         logging.info("the CSDN_COOKIE is require,please set it.")
         return False
     if JUEJIN_COOKIE is None:
         logging.info("the JUEJIN_COOKIE is require,please set it.")
-        return False
-    if JUEJIN_UUID is None or JUEJIN_UUID == "":
-        logging.info("the JUEJIN_UUID is require,please set it.")
-        return False
+        check_flag = False
     logging.info("check_env_parmas success.")
-    return True
+    return check_flag
 
 
 """
