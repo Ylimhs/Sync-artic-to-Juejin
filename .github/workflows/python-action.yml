@@ -9,6 +9,12 @@ on:
 #      input1:
 #        description: 'A sample input'
 #        required: false
+env:
+  CSND_COOKIE: ${{ secrets.CSND_COOKIE }}
+  JUEJIN_COOKIE: ${{ secrets.JUEJIN_COOKIE }}
+  SYNC_TO_DRAFT: ${{ secrets.SYNC_TO_DRAFT }}
+  CSND_ARTIC_STATUS: ${{ secrets.CSND_ARTIC_STATUS }}
+
 
 jobs:
   build:
