@@ -287,6 +287,11 @@ def publish_csdn_to_jj(client, csdn_artics_info):
             # 检查简介是够符合
             changeFormatFlag = check_description(client, id, artic_info, description)
 
+            if len(description) > 100:
+                artic_info.update({
+                    "brief_content": description[:100]
+                })
+
             # 发布
             logging.info("----------------------------------------------------")
             logging.info(f"----------------SYNC_TO_DRAFT is {SYNC_TO_DRAFT}------------------------------------")
