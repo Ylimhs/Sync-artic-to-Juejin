@@ -172,6 +172,7 @@ def publish_article(client, id):
         try:
             column_ids = list()
             result = client.publish_article(id, column_ids)
+            logging.info(f"publish_article return is {result}")
             if result.get("err_no") == 0 and result.get("err_msg") == "success":
                 return True
         except:
@@ -288,7 +289,7 @@ def publish_csdn_to_jj(client, csdn_artics_info):
 
             # 发布
             logging.info("----------------------------------------------------")
-
+            logging.info(f"----------------SYNC_TO_DRAFT is {SYNC_TO_DRAFT}------------------------------------")
             if not SYNC_TO_DRAFT:
                 logging.info("begin publish aticle ...")
                 if changeFormatFlag:
