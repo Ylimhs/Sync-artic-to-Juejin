@@ -49,7 +49,10 @@
 ![action2.png](./doc/pic/action2.png)
 ![action4.png](./doc/pic/action4.png)
 #### 同步直接发布
-![action3.png](./doc/pic/action3.png)
+![action5.png](./doc/pic/action5.png)
+![aciton6.png](./doc/pic/action6.png)
+
+
 ## 问题
 
 ### 如何获取Cookie
