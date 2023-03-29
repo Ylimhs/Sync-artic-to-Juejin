@@ -32,10 +32,9 @@
 
 
 4. 仓库 -> Actions, 检查Workflows并启用。
-5. 执行 Aciton
-> 直接手动执行
-    ![img.png](./doc/pic/action1.png)
-> 如果需要定时执行，请暂时自行修改 `.github/workflows/python-action.yml` 文件
+5. 执行 Aciton (直接手动执行)
+![img.png](./doc/pic/action1.png)
+> 如果需要定时执行，请暂时自行修改 `.github/workflows/python-action.yml` 文件 非必须
 
 ## 注意事项：
 - 为了保证图片转存无水印，请在CSDN设置关闭文章水印
