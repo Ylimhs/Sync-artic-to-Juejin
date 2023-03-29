@@ -293,7 +293,9 @@ def publish_csdn_to_jj(client, csdn_artics_info):
 
             # 发布
             logging.info("----------------------------------------------------")
-            logging.info(f"----------------SYNC_TO_DRAFT is {SYNC_TO_DRAFT}------------------------------------")
+            b = SYNC_TO_DRAFT
+            logging.info(f"----------------SYNC_TO_DRAFT is {b}------------------------------------")
+
             if not SYNC_TO_DRAFT:
                 logging.info("begin publish aticle ...")
                 if changeFormatFlag:

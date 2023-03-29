@@ -12,7 +12,7 @@
 使用自动化工作流有两种方式：快速使用(在线) 和 私有化部署(本地)
 
 - 快速使用自动化：[阅读 使用](#使用)
-- 可以本地执行： [阅读 本地执行](#本地执行)
+- 可以本地执行： [阅读 本地执行](./doc/local.md)
 
 ## 使用
 
@@ -32,35 +32,24 @@
 
 
 4. 仓库 -> Actions, 检查Workflows并启用。
+5. 执行 Aciton
 > 直接手动执行
-    ![img.png](./doc/pic/手动执行action1.png)
-5. 如果需要定时执行，请暂时自行修改 `.github/workflows/python-action.yml` 文件
-
+    ![img.png](./doc/pic/action1.png)
+> 如果需要定时执行，请暂时自行修改 `.github/workflows/python-action.yml` 文件
 
 ## 注意事项：
 - 为了保证图片转存无水印，请在CSDN设置关闭文章水印
 - 目前同步到掘金，默认文章分类和标签为前端，自定义配置后续完善 可以自行在`api/JuejinApi.py` 下的`create_article_draft`和`update_article_draft`函数下直接更改
 `category_id`和`tags_id`的值。**注意自己账号的可选tags数量**
 
-## 本地执行：
-## 环境
-> python >= 3.9  其他环境我没试过~~
-1. 下载项目 或 [ clone the repo:](https://github.com/Ylimhs/Sync-artic-to-Juejin)
-2. 安装python依赖
-    > pip install -r requirements.txt
-3. Copy `config/.env.bak` 文件为 `config/.env` 并填写相应的参数
-4. 执行 `main.py`
-   > python main.py
-
 ## 预览
 ### Action 执行
-~~待更新~~
-
-### 本地执行
-![img.png](./doc/pic/img1.png)
-![img.png](./doc/pic/img.png)
-![img.png](./doc/pic/img2.png)
-![img.png](./doc/pic/img3.png)
+![action1.png](./doc/pic/action1.png)
+#### 同步到草稿箱
+![action2.png](./doc/pic/action2.png)
+![action4.png](./doc/pic/action4.png)
+#### 同步直接发布
+![action3.png](./doc/pic/action3.png)
 ## 问题
 
 ### 如何获取Cookie
