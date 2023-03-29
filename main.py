@@ -344,7 +344,7 @@ def print_result():
 def sync_csdn_to_jj():
     logging.info("begin to sycn csdn artic to jj")
     cs_client = CsdnClient(CSND_COOKIE)
-    jj_client = JJClient(JUEJIN_COOKIE, JUEJIN_UUID)
+    jj_client = JJClient(JUEJIN_COOKIE)
     csdn_artics_info = get_csdn_artics_info(cs_client)
     # push to JJ article_draft
     publish_csdn_to_jj(jj_client, csdn_artics_info)

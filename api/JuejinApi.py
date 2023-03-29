@@ -3,9 +3,9 @@ from utils.utils import request
 
 
 class JJClient(object):
-    def __init__(self, juejin_cookie, uuid):
+    def __init__(self, juejin_cookie, uuid=None):
         self.cookie = juejin_cookie
-        self.uuid = uuid
+        #self.uuid = uuid
 
     """
     创建草稿箱文章
@@ -37,7 +37,8 @@ class JJClient(object):
         else:
             link_url = artic_info.get("link_url")
 
-        url = "https://api.juejin.cn/content_api/v1/article_draft/create?aid=2608&uuid=" + self.uuid
+        # url = "https://api.juejin.cn/content_api/v1/article_draft/create?aid=2608&uuid=" + self.uuid
+        url = "https://api.juejin.cn/content_api/v1/article_draft/create"
 
         payload = json.dumps({
             "category_id": category_id,
@@ -95,7 +96,8 @@ class JJClient(object):
         else:
             link_url = artic_info.get("link_url")
 
-        url = "https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=" + self.uuid
+        # url = "https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=" + self.uuid
+        url = "https://api.juejin.cn/content_api/v1/article_draft/update"
 
         payload = json.dumps({
             "id": id,
@@ -130,7 +132,8 @@ class JJClient(object):
     def publish_article(self, draft_id, column_ids=None):
         if column_ids is None:
             column_ids = list()
-        url = "https://api.juejin.cn/content_api/v1/article/publish?aid=2608&uuid=" + self.uuid
+        # url = "https://api.juejin.cn/content_api/v1/article/publish?aid=2608&uuid=" + self.uuid
+        url = "https://api.juejin.cn/content_api/v1/article/publish"
         payload = json.dumps({
             "draft_id": draft_id,
             "sync_to_org": False,
@@ -177,7 +180,8 @@ class JJClient(object):
     """
 
     def get_article_draft_abstract(self, draft_id):
-        url = "https://api.juejin.cn/content_api/v1/article_draft/abstract?draft_id=" + draft_id + "&aid=2608&uuid=" + self.uuid
+        # url = "https://api.juejin.cn/content_api/v1/article_draft/abstract?draft_id=" + draft_id + "&aid=2608&uuid=" + self.uuid
+        url = "https://api.juejin.cn/content_api/v1/article_draft/abstract?draft_id=" + draft_id
         payload = {}
         headers = {
             'authority': 'api.juejin.cn',
