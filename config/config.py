@@ -12,7 +12,7 @@ CSND_COOKIE = os.getenv("CSND_COOKIE")
 SYNC_TO_DRAFT = os.getenv("SYNC_TO_DRAFT")
 CSND_ARTIC_STATUS = os.getenv("CSND_ARTIC_STATUS")
 
-if SYNC_TO_DRAFT is None:
+if SYNC_TO_DRAFT is None or SYNC_TO_DRAFT == "":
     SYNC_TO_DRAFT = True
 
 if CSND_ARTIC_STATUS is None:

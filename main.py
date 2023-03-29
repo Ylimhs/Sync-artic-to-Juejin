@@ -275,6 +275,10 @@ def publish_csdn_to_jj(client, csdn_artics_info):
                 "brief_content": description,
                 "mark_content": content
             })
+            if len(description) > 100:
+                artic_info.update({
+                    "brief_content": description[:100]
+                })
             id = create_article_draft(client, artic_info)
             if id is not None:
                 logging.info(f"create_article_draft {article_id} to {id} sucesss.")
@@ -286,11 +290,6 @@ def publish_csdn_to_jj(client, csdn_artics_info):
 
             # 检查简介是够符合
             changeFormatFlag = check_description(client, id, artic_info, description)
-
-            if len(description) > 100:
-                artic_info.update({
-                    "brief_content": description[:100]
-                })
 
             # 发布
             logging.info("----------------------------------------------------")
