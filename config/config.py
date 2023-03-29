@@ -15,6 +15,9 @@ CSND_ARTIC_STATUS = os.getenv("CSND_ARTIC_STATUS")
 if SYNC_TO_DRAFT is None:
     SYNC_TO_DRAFT = True
 
+if CSND_ARTIC_STATUS is None:
+    CSND_ARTIC_STATUS = "enable"
+
 if __name__ == '__main__':
     print(JUEJIN_COOKIE)
     print(JUEJIN_UUID)
