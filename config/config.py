@@ -14,6 +14,8 @@ CSND_COOKIE = os.getenv("CSND_COOKIE")
 SYNC_TO_DRAFT = os.getenv("SYNC_TO_DRAFT")
 CSND_ARTIC_STATUS = os.getenv("CSND_ARTIC_STATUS")
 
+ZHIHU_COOKIE = os.getenv("ZHIHU_COOKIE")
+
 if SYNC_TO_DRAFT is None or SYNC_TO_DRAFT == "":
     SYNC_TO_DRAFT = True
 else:

@@ -10,9 +10,12 @@ import os
 import hashlib
 import hmac
 import random
+import re
 from base64 import b64encode
 from urllib.parse import urlparse, urlencode
 import urllib.parse
+
+import markdown
 import requests
 
 
@@ -94,3 +97,45 @@ if __name__ == '__main__':
     # m7yvw8o9pdn/0EbTOFxYHfQnc6myGHTYzehbUe7l3pM=
     print(get_sign("c6590c52-0713-476a-9ee7-97aa4ae86a2a",
                    "https://bizapi.csdn.net/blog/phoenix/console/v1/article/list?pageSize=20&status=enable"))
+
+"""
+ 解析替换 转存图片链接
+"""
+def get_image_url(client, matchUrl):
+    newUrl = matchUrl
+    try:
+        result = client.img_urlSave(matchUrl)
+        if result.get("err_no") == 0 and result.get("err_msg") == "success":
+            newUrl = result.get("data")
+    except Exception as err:
+        logging.warning(f"save imgUrl {matchUrl} failed with err is {err}")
+        return None
+    return newUrl
+
+"""
+替换图片url
+"""
+
+
+def html_replace_image_links(client, content_text):
+    """解析Markdown文本中的图片链接并替换为动态获取的链接"""
+    replaced_html_text = content_text
+    try:
+        html_text = markdown.markdown(content_text)
+        pattern = r'<img.*?src="(.*?)".*?>'
+        replaced_html_text = html_text
+        for match in re.findall(pattern, html_text):
+            new_url = get_image_url(client, match)
+            if new_url is not None:
+                replaced_html_text = replaced_html_text.replace(match, new_url)
+
+        part = '<a.*?href="(.*?)".*?>'
+        for match in re.findall(part, replaced_html_text):
+            new_url = match.replace("https://link.zhihu.com/?target=", "")
+            new_url = urllib.parse.unquote(new_url)
+            replaced_html_text = replaced_html_text.replace(match, new_url)
+
+        replaced_html_text = replaced_html_text.replace("https://link.zhihu.com/?target=","")
+    except Exception as err:
+        logging.warning(f"Failed to html_replace_image_links with err is {err}")
+    return replaced_html_text
