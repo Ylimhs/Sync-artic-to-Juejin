@@ -3,7 +3,7 @@ import time
 from api.JuejinApi import JJClient
 from api.zhihuApi import zhiHuClient
 from config.config import JUEJIN_COOKIE, ZHIHU_COOKIE, SYNC_TO_DRAFT
-from utils.articUtils import create_article_draft, check_description, publish_article
+from utils.articUtils import create_article_draft, check_description, publish_article, print_result
 from utils.const import failed_sysc_artic_list, success_sysc_artic_dict, success_sysc_artic_dratf_dict
 from utils.utils import logging, html_replace_image_links
 
@@ -74,9 +74,11 @@ def publish_zhihu_to_jj(client, zhihu_zhuanlan_artics_info):
                 retry += -1
             if retry == 0:
                 changeFormatFlag = False
+            # "tag_ids": ["6809640642101116936"] - 人工智能
+            # "tag_ids": ["6809641083107016712"] - 资讯
             artic_info.update({
                 "category_id": "6809637773935378440",
-                "tag_ids": ["6809640642101116936"],
+                "tag_ids": ["6809641083107016712"],
                 "title": title,
                 "brief_content": description,
                 "mark_content": content
@@ -139,9 +141,10 @@ def zhihu2JJ():
     logging.info("begin to sycn zhihu zhuanlan artic to jj")
     zh_client = zhiHuClient(ZHIHU_COOKIE)
     jj_client = JJClient(JUEJIN_COOKIE)
-    zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "jiqizhixin")
+    # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "jiqizhixin")
+    zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "qbitai")
     publish_zhihu_to_jj(jj_client, zhihu_zhuanlan_artics_info)
-
+    print_result()
 
 if __name__ == '__main__':
     zhihu2JJ()
