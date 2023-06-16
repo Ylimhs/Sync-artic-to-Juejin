@@ -166,6 +166,10 @@ def zhihu2JJ():
     # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "jiqizhixin")
     zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, timeTOS(start_time),
                                                                 timeTOS(end_time))
+
+    print(zhihu_zhuanlan_artics_info)
+    print(len(zhihu_zhuanlan_artics_info))
+
     # 文章分类 默认前端
     category_id = "6809637773935378440"
     # 文章标签
@@ -173,7 +177,7 @@ def zhihu2JJ():
     # "tag_ids": ["6809641083107016712"] - 资讯
     tag_ids = ["6809641083107016712"]
     publish_zhihu_to_jj(jj_client, zhihu_zhuanlan_artics_info, category_id, tag_ids)
-    # print_result()
+    print_result()
 
 
 if __name__ == '__main__':
