@@ -24,7 +24,9 @@ def get_zhihu_zhuanlan_artics_info(zh_client, column_id, start_time, end_time):
     totalPage = totals // 100 + 1  # 获取总页数
     stop_get = False
     # totalPage = 1
-    for i in range(totalPage and not stop_get):
+    for i in range(totalPage):
+        if stop_get:
+            break
         respage = zh_client.get_cl_artc_list(column_id, offset=i * 100)
         data = respage['data']
         for article in data:
@@ -160,22 +162,30 @@ def zhihu2JJ():
     # ZHIHU_COOKIE 可以不需要
     zh_client = zhiHuClient(ZHIHU_COOKIE)
     jj_client = JJClient(JUEJIN_COOKIE)
-    start_time = "2023-06-15 00:00:00"
-    end_time = "2023-06-15 22:59:00"
+
+    # zhuanlanName = "jiqizhixin"
+    # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, None ,None)
+
+    # zhuanlanName = "xinzhiyuan"
+    # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, None ,None)
+
+    start_time = "2023-02-20 00:00:00"
+    end_time = "2023-03-01 00:00:00"
     zhuanlanName = "qbitai"
-    # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "jiqizhixin")
     zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, timeTOS(start_time),
                                                                 timeTOS(end_time))
 
-    print(zhihu_zhuanlan_artics_info)
+    # print(zhihu_zhuanlan_artics_info)
     print(len(zhihu_zhuanlan_artics_info))
 
-    # 文章分类 默认前端
+    # 文章分类 默认人工智能
     category_id = "6809637773935378440"
     # 文章标签
     # "tag_ids": ["6809640642101116936"] - 人工智能
     # "tag_ids": ["6809641083107016712"] - 资讯
     tag_ids = ["6809641083107016712"]
+
+    ## 测试时间段内的文章数量 或者全部的文章数量 先注释以下两行
     publish_zhihu_to_jj(jj_client, zhihu_zhuanlan_artics_info, category_id, tag_ids)
     print_result()
 
