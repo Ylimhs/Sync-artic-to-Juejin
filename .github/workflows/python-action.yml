@@ -5,15 +5,29 @@ on:
   #schedule:
   #  - cron: '0 0 * * *' # 每天 UTC 时间 00:00 执行
   workflow_dispatch:
-#    inputs:
-#      input1:
-#        description: 'A sample input'
-#        required: false
+    inputs:
+      var1:
+        description: 'JJcookie'
+        required: true
+      var2:
+        description: 'column name'
+        required: true
+      var3:
+        description: 'Start time'
+        required: false
+      var4:
+        description: 'End time'
+        required: false
+
 env:
   CSND_COOKIE: ${{ secrets.CSND_COOKIE }}
   JUEJIN_COOKIE: ${{ secrets.JUEJIN_COOKIE }}
   SYNC_TO_DRAFT: ${{ secrets.SYNC_TO_DRAFT }}
   CSND_ARTIC_STATUS: ${{ secrets.CSND_ARTIC_STATUS }}
+  JUEJININPUT_COOKIE：: ${{ github.event.inputs.var1 }}
+  COLUMNNAME: ${{ github.event.inputs.var1 }}
+  STARTTIME: ${{ github.event.inputs.var2 }}
+  ENDTIME: ${{ github.event.inputs.var3 }}
 
 
 jobs:
