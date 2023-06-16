@@ -8,7 +8,6 @@ from utils.const import failed_sysc_artic_list, success_sysc_artic_dict, success
 from utils.utils import logging, html_replace_image_links
 
 
-
 def timeTOS(t):
     # 转换成时间数组
     timeArray = time.strptime(t, "%Y-%m-%d %H:%M:%S")
@@ -16,7 +15,8 @@ def timeTOS(t):
     timestamp = time.mktime(timeArray)
     return timestamp
 
-def get_zhihu_zhuanlan_artics_info(zh_client, column_id,start_time, end_time):
+
+def get_zhihu_zhuanlan_artics_info(zh_client, column_id, start_time, end_time):
     artic_info_list = list()
     # 获取总的文章数量
     res = zh_client.get_cl_artc_list(column_id)
@@ -52,7 +52,7 @@ def get_zhihu_zhuanlan_artics_info(zh_client, column_id,start_time, end_time):
     return artic_info_list
 
 
-def publish_zhihu_to_jj(client, zhihu_zhuanlan_artics_info):
+def publish_zhihu_to_jj(client, zhihu_zhuanlan_artics_info, category_id, tag_ids):
     if not zhihu_zhuanlan_artics_info:
         return
     else:
@@ -95,8 +95,8 @@ def publish_zhihu_to_jj(client, zhihu_zhuanlan_artics_info):
             # "tag_ids": ["6809640642101116936"] - 人工智能
             # "tag_ids": ["6809641083107016712"] - 资讯
             artic_info.update({
-                "category_id": "6809637773935378440",
-                "tag_ids": ["6809641083107016712"],
+                "category_id": category_id,
+                "tag_ids": tag_ids,
                 "title": title,
                 "brief_content": description,
                 "mark_content": content
@@ -164,11 +164,17 @@ def zhihu2JJ():
     end_time = "2023-06-15 22:59:00"
     zhuanlanName = "qbitai"
     # zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, "jiqizhixin")
-    zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, timeTOS(start_time), timeTOS(end_time))
-    print(zhihu_zhuanlan_artics_info)
-    print(len(zhihu_zhuanlan_artics_info))
-    publish_zhihu_to_jj(jj_client, zhihu_zhuanlan_artics_info)
+    zhihu_zhuanlan_artics_info = get_zhihu_zhuanlan_artics_info(zh_client, zhuanlanName, timeTOS(start_time),
+                                                                timeTOS(end_time))
+    # 文章分类 默认前端
+    category_id = "6809637773935378440"
+    # 文章标签
+    # "tag_ids": ["6809640642101116936"] - 人工智能
+    # "tag_ids": ["6809641083107016712"] - 资讯
+    tag_ids = ["6809641083107016712"]
+    publish_zhihu_to_jj(jj_client, zhihu_zhuanlan_artics_info, category_id, tag_ids)
     # print_result()
+
 
 if __name__ == '__main__':
     zhihu2JJ()
